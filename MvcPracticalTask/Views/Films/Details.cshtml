@@ -1,0 +1,22 @@
+﻿@model MvcPracticalTask.Models.Film
+
+<h2>Film Details</h2>
+
+<div class="card p-3">
+    <h3>@Model.Title</h3>
+
+    <p><strong>FilmID:</strong> @Model.FilmID</p>
+    <p><strong>DirectorID:</strong> @Model.DirectorID</p>
+    <p><strong>Run Time:</strong> @Model.RunTimeMinutes minutes</p>
+    <p><strong>Budget:</strong> @Model.BudgetDollars</p>
+    <p><strong>Box Office:</strong> @Model.BoxOfficeDollars</p>
+    <p><strong>Oscar Nominations:</strong> @Model.OscarNominations</p>
+    <p><strong>Oscar Wins:</strong> @Model.OscarWins</p>
+
+    <hr />
+
+    <p><strong>Review:</strong></p>
+    <p>@Model.Review</p>
+
+    <a asp-controller="Films" asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

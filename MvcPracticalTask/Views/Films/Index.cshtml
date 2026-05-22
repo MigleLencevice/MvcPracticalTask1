@@ -1,0 +1,46 @@
+﻿@model List<MvcPracticalTask.Models.Film>
+
+<h2>Films from Database</h2>
+
+<a asp-action="Create" class="btn btn-success mb-3">+ Add Film</a>
+
+<table class="table table-striped">
+    <tr>
+        <th>FilmID</th>
+        <th>Title</th>
+        <th>DirectorID</th>
+        <th>Run Time</th>
+        <th>Budget</th>
+        <th>Box Office</th>
+        <th>Oscar Nominations</th>
+        <th>Oscar Wins</th>
+        <th>Actions</th>
+    </tr>
+
+    @foreach (var film in Model)
+    {
+        <tr>
+            <td>@film.FilmID</td>
+            <td>@film.Title</td>
+            <td>@film.DirectorID</td>
+            <td>@film.RunTimeMinutes</td>
+            <td>@film.BudgetDollars</td>
+            <td>@film.BoxOfficeDollars</td>
+            <td>@film.OscarNominations</td>
+            <td>@film.OscarWins</td>
+            <td>
+                <a asp-controller="Films" asp-action="Details" asp-route-id="@film.Id" class="btn btn-sm btn-primary">
+                    Details
+                </a>
+
+                <a asp-controller="Films" asp-action="Edit" asp-route-id="@film.Id" class="btn btn-sm btn-warning">
+                    Edit
+                </a>
+
+                <a asp-controller="Films" asp-action="Delete" asp-route-id="@film.Id" class="btn btn-sm btn-danger">
+                    Delete
+                </a>
+            </td>
+        </tr>
+    }
+</table>
