@@ -1,5 +1,5 @@
 <Solution>
-  <Project Path="MovieService/MovieService.csproj" Id="bfc2b694-ae05-4a26-b625-1ff41f8d413b" />
+  <Project Path="MovieService/MovieService.csproj" />
   <Project Path="MvcPracticalTask/MvcPracticalTask.csproj" />
-  <Project Path="ReviewService/ReviewService.csproj" Id="278b360c-c9b1-4874-ad86-1976f6589604" />
+  <Project Path="ReviewService/ReviewService.csproj" />
 </Solution>

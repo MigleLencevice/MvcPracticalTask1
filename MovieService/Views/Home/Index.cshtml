@@ -1,0 +1,221 @@
+﻿@{
+    ViewData["Title"] = "Movie Catalog";
+}
+
+<div style="max-width:1300px; margin:auto; padding:30px; font-family:Arial;">
+
+    <div style="background:#1e293b; color:white; padding:30px; border-radius:15px;">
+        <h1>🎬 Movie Catalog</h1>
+        <p>ASP.NET Core Movie Management System</p>
+        <p><strong>Admin:</strong> admin@films.lt / admin123</p>
+        <p><strong>User:</strong> user@films.lt / user123</p>
+        <p id="roleText" style="color:#4ade80; font-weight:bold;"></p>
+    </div>
+
+    <br />
+
+    <div style="background:#f3f4f6; padding:25px; border-radius:15px;">
+        <h2>Login</h2>
+
+        <form onsubmit="login(event)">
+            <label>Email</label><br />
+            <input id="email" type="text" style="width:100%; padding:10px; margin-bottom:10px;" />
+
+            <label>Password</label><br />
+            <input id="password" type="password" style="width:100%; padding:10px; margin-bottom:10px;" />
+
+            <button style="background:#2563eb; color:white; border:none; padding:10px 20px; border-radius:8px;">
+                Login
+            </button>
+        </form>
+    </div>
+
+    <br />
+
+    <div id="moviesSection" style="display:none;">
+        <h2>Films from Database</h2>
+
+        <div id="adminButtons" style="display:none; margin-bottom:15px;">
+            <button onclick="showAddForm()" style="background:green; color:white; border:none; padding:8px 15px; border-radius:6px;">
+                + Add Film
+            </button>
+        </div>
+
+        <div id="movieForm" style="display:none; background:#f3f4f6; padding:20px; border-radius:10px; margin-bottom:20px;">
+            <h3>Add New Film</h3>
+
+            <input id="filmId" placeholder="FilmID" style="width:100%; padding:8px; margin-bottom:8px;" />
+            <input id="filmTitle" placeholder="Title" style="width:100%; padding:8px; margin-bottom:8px;" />
+            <input id="directorId" placeholder="DirectorID" style="width:100%; padding:8px; margin-bottom:8px;" />
+            <input id="runTime" placeholder="Run Time" style="width:100%; padding:8px; margin-bottom:8px;" />
+            <input id="budget" placeholder="Budget" style="width:100%; padding:8px; margin-bottom:8px;" />
+            <input id="boxOffice" placeholder="Box Office" style="width:100%; padding:8px; margin-bottom:8px;" />
+            <input id="oscarNominations" placeholder="Oscar Nominations" style="width:100%; padding:8px; margin-bottom:8px;" />
+            <input id="oscarWins" placeholder="Oscar Wins" style="width:100%; padding:8px; margin-bottom:8px;" />
+
+            <button onclick="addFilm()" style="background:green; color:white; border:none; padding:8px 15px; border-radius:6px;">
+                Save Film
+            </button>
+        </div>
+
+        <table id="filmsTable" style="width:100%; border-collapse:collapse; font-size:13px;">
+            <tr style="background:#e5e7eb;">
+                <th>FilmID</th>
+                <th>Title</th>
+                <th>DirectorID</th>
+                <th>Run Time</th>
+                <th>Budget</th>
+                <th>Box Office</th>
+                <th>Oscar Nominations</th>
+                <th>Oscar Wins</th>
+                <th>Actions</th>
+            </tr>
+
+            <tbody id="filmsBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    let films = [
+        [1, "Jurassic Park", 4, 126, 63000000, 1029939903, 3, 3],
+        [2, "Spider-Man", 11, 121, 140000000, 821708551, 2, 0],
+        [3, "King Kong", 12, 187, 207000000, 550500000, 4, 3],
+        [4, "Superman Returns", 14, 154, 204000000, 391081192, 1, 0],
+        [5, "Titanic", 15, 194, 200000000, 2186772302, 14, 11],
+        [6, "Evan Almighty", 16, 96, 175000000, 173418781, 0, 0],
+        [7, "Waterworld", 17, 135, 175000000, 264218220, 1, 0],
+        [8, "Pearl Harbor", 18, 183, 140000000, 449220945, 4, 1],
+        [9, "Transformers", 18, 144, 150000000, 709709780, 3, 0],
+        [10, "Harry Potter and the Order of the Phoenix", 19, 138, 150000000, 939885929, 0, 0],
+        [11, "Beowulf", 20, 115, 150000000, 196393745, 0, 0],
+        [12, "Bee Movie", 21, 91, 150000000, 287594577, 0, 0],
+        [13, "Avatar", 22, 162, 237000000, 2923706026, 9, 3],
+        [14, "The Dark Knight", 23, 152, 185000000, 1004558444, 8, 2],
+        [15, "Inception", 23, 148, 160000000, 837212993, 8, 4],
+        [16, "Interstellar", 23, 169, 165000000, 733202212, 5, 1],
+        [17, "The Matrix", 24, 136, 63000000, 467222728, 4, 4],
+        [18, "The Lord of the Rings", 25, 178, 93000000, 871530324, 13, 4],
+        [19, "The Avengers", 26, 143, 220000000, 1518815515, 1, 0],
+        [20, "Black Panther", 27, 134, 200000000, 1349926083, 7, 3],
+        [21, "Frozen", 28, 102, 150000000, 1281508100, 2, 2],
+        [22, "Toy Story 3", 29, 103, 200000000, 1066969703, 5, 2],
+        [23, "Finding Nemo", 30, 100, 94000000, 940352645, 4, 1],
+        [24, "Shrek 2", 31, 93, 150000000, 935253978, 2, 0],
+        [25, "The Lion King", 32, 88, 45000000, 968511805, 2, 2]
+    ];
+
+    let isAdmin = false;
+
+    function login(event) {
+        event.preventDefault();
+
+        let email = document.getElementById("email").value;
+        let password = document.getElementById("password").value;
+
+        if (email === "admin@films.lt" && password === "admin123") {
+            isAdmin = true;
+            document.getElementById("roleText").innerHTML = "Logged in as ADMIN";
+            document.getElementById("moviesSection").style.display = "block";
+            document.getElementById("adminButtons").style.display = "block";
+            renderFilms();
+            alert("Welcome ADMIN!");
+            return;
+        }
+
+        if (email === "user@films.lt" && password === "user123") {
+            isAdmin = false;
+            document.getElementById("roleText").innerHTML = "Logged in as USER";
+            document.getElementById("moviesSection").style.display = "block";
+            document.getElementById("adminButtons").style.display = "none";
+            renderFilms();
+            alert("Welcome USER!");
+            return;
+        }
+
+        alert("Wrong email or password");
+    }
+
+    function renderFilms() {
+        let body = document.getElementById("filmsBody");
+        body.innerHTML = "";
+
+        films.forEach((film, index) => {
+            body.innerHTML += `
+                <tr>
+                    <td>${film[0]}</td>
+                    <td>${film[1]}</td>
+                    <td>${film[2]}</td>
+                    <td>${film[3]}</td>
+                    <td>${film[4]}</td>
+                    <td>${film[5]}</td>
+                    <td>${film[6]}</td>
+                    <td>${film[7]}</td>
+                    <td>
+                        <button onclick="detailsFilm(${index})" style="background:#2563eb;color:white;border:none;padding:5px;border-radius:5px;">Details</button>
+                        ${isAdmin ? `
+                        <button onclick="editFilm(${index})" style="background:orange;color:white;border:none;padding:5px;border-radius:5px;">Edit</button>
+                        <button onclick="deleteFilm(${index})" style="background:red;color:white;border:none;padding:5px;border-radius:5px;">Delete</button>
+                        ` : ""}
+                    </td>
+                </tr>`;
+        });
+    }
+
+    function detailsFilm(index) {
+        let film = films[index];
+
+        alert(
+            "Film Details\n\n" +
+            "FilmID: " + film[0] + "\n" +
+            "Title: " + film[1] + "\n" +
+            "DirectorID: " + film[2] + "\n" +
+            "Run Time: " + film[3] + "\n" +
+            "Budget: " + film[4] + "\n" +
+            "Box Office: " + film[5] + "\n" +
+            "Oscar Nominations: " + film[6] + "\n" +
+            "Oscar Wins: " + film[7]
+        );
+    }
+
+    function showAddForm() {
+        document.getElementById("movieForm").style.display = "block";
+    }
+
+    function addFilm() {
+        let newFilm = [
+            document.getElementById("filmId").value,
+            document.getElementById("filmTitle").value,
+            document.getElementById("directorId").value,
+            document.getElementById("runTime").value,
+            document.getElementById("budget").value,
+            document.getElementById("boxOffice").value,
+            document.getElementById("oscarNominations").value,
+            document.getElementById("oscarWins").value
+        ];
+
+        films.push(newFilm);
+        renderFilms();
+
+        document.getElementById("movieForm").style.display = "none";
+        alert("Film added!");
+    }
+
+    function editFilm(index) {
+        let newTitle = prompt("Enter new film title:", films[index][1]);
+
+        if (newTitle) {
+            films[index][1] = newTitle;
+            renderFilms();
+            alert("Film edited!");
+        }
+    }
+
+    function deleteFilm(index) {
+        if (confirm("Do you really want to delete this film?")) {
+            films.splice(index, 1);
+            renderFilms();
+            alert("Film deleted!");
+        }
+    }
+</script>
